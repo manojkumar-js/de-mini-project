@@ -1,0 +1,69 @@
+resources:
+  jobs:
+    pl_all_layers:
+      name: pl_all_layers
+      tasks:
+        - task_key: bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/manoj.grinds@gmail.com/de-mini-project/01_bronze/nb_bronze
+            source: WORKSPACE
+          environment_key: bronze_environment
+        - task_key: silver_common
+          depends_on:
+            - task_key: bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/manoj.grinds@gmail.com/de-mini-project/02_silver/nb_silver_common
+            source: WORKSPACE
+          environment_key: bronze_environment
+        - task_key: silver_customers
+          depends_on:
+            - task_key: silver_common
+          notebook_task:
+            notebook_path: /Workspace/Users/manoj.grinds@gmail.com/de-mini-project/02_silver/nb_customers
+            source: WORKSPACE
+        - task_key: silver_invoice_line_items
+          depends_on:
+            - task_key: silver_common
+          notebook_task:
+            notebook_path: /Workspace/Users/manoj.grinds@gmail.com/de-mini-project/02_silver/nb_invoice_line_items
+            source: WORKSPACE
+        - task_key: silver_invoices
+          depends_on:
+            - task_key: silver_common
+          notebook_task:
+            notebook_path: /Workspace/Users/manoj.grinds@gmail.com/de-mini-project/02_silver/nb_invoices
+            source: WORKSPACE
+        - task_key: silver_products
+          depends_on:
+            - task_key: silver_common
+          notebook_task:
+            notebook_path: /Workspace/Users/manoj.grinds@gmail.com/de-mini-project/02_silver/nb_products
+            source: WORKSPACE
+        - task_key: gold_fact_dim
+          depends_on:
+            - task_key: silver_products
+            - task_key: silver_customers
+            - task_key: silver_invoice_line_items
+            - task_key: silver_invoices
+          notebook_task:
+            notebook_path: /Workspace/Users/manoj.grinds@gmail.com/de-mini-project/03_gold/nb_fact_dim
+            source: WORKSPACE
+        - task_key: gold_cube_table
+          depends_on:
+            - task_key: gold_fact_dim
+          notebook_task:
+            notebook_path: /Workspace/Users/manoj.grinds@gmail.com/de-mini-project/03_gold/nb_cube_table
+            source: WORKSPACE
+        - task_key: gold_kpi
+          depends_on:
+            - task_key: gold_cube_table
+          notebook_task:
+            notebook_path: /Workspace/Users/manoj.grinds@gmail.com/de-mini-project/03_gold/nb_kpi
+            source: WORKSPACE
+      queue:
+        enabled: true
+      environments:
+        - environment_key: bronze_environment
+          spec:
+            environment_version: "5"
+      performance_target: PERFORMANCE_OPTIMIZED
